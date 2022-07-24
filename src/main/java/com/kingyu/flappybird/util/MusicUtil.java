@@ -22,7 +22,7 @@ public class MusicUtil {
     public static void playFly() {
         try {
             // create an AudioStream from the InputStream
-            InputStream flyIn = new FileInputStream("src/main/resources/wav/fly.wav");
+            InputStream flyIn = new FileInputStream("resources/wav/fly.wav");
             fly = new AudioStream(flyIn);
         } catch (IOException ignored) {
         }
@@ -32,7 +32,7 @@ public class MusicUtil {
     public static void playCrash() {
         try {
             // create an AudioStream from the InputStream
-            InputStream crashIn = new FileInputStream("src/main/resources/wav/crash.wav");
+            InputStream crashIn = new FileInputStream("resources/wav/crash.wav");
             crash = new AudioStream(crashIn);
         } catch (IOException ignored) {
         }
@@ -42,7 +42,7 @@ public class MusicUtil {
     public static void playScore() {
         try {
             // create an AudioStream from the InputStream
-            InputStream scoreIn = new FileInputStream("src/main/resources/wav/score.wav");
+            InputStream scoreIn = new FileInputStream("resources/wav/score.wav");
             score = new AudioStream(scoreIn);
         } catch (IOException ignored) {
         }

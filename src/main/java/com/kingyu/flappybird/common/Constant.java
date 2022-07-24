@@ -21,35 +21,35 @@ public class Constant {
     public static final int FRAME_Y = 100;
 
     // 图像资源路径
-    public static final String BG_IMG_PATH = "src/main/resources/img/background.png"; // 背景图片
+    public static final String BG_IMG_PATH = "resources/img/background.png"; // 背景图片
 
     // 小鸟图片
     public static final String[][] BIRDS_IMG_PATH = {
-            { "src/main/resources/img/0.png", "src/main/resources/img/1.png", "src/main/resources/img/2.png", "src/main/resources/img/3.png",
-                    "src/main/resources/img/4.png", "src/main/resources/img/5.png", "src/main/resources/img/6.png", "src/main/resources/img/7.png" },
-            { "src/main/resources/img/up.png", "src/main/resources/img/up.png", "src/main/resources/img/up.png", "src/main/resources/img/up.png",
-                    "src/main/resources/img/up.png", "src/main/resources/img/up.png", "src/main/resources/img/up.png", "src/main/resources/img/up.png" },
-            { "src/main/resources/img/down_0.png", "src/main/resources/img/down_1.png", "src/main/resources/img/down_2.png",
-                    "src/main/resources/img/down_3.png", "src/main/resources/img/down_4.png", "src/main/resources/img/down_5.png",
-                    "src/main/resources/img/down_6.png", "src/main/resources/img/down_7.png" },
-            { "src/main/resources/img/dead.png", "src/main/resources/img/dead.png", "src/main/resources/img/dead.png", "src/main/resources/img/dead.png",
-                    "src/main/resources/img/dead.png", "src/main/resources/img/dead.png", "src/main/resources/img/dead.png",
-                    "src/main/resources/img/dead.png", } };
+            { "resources/img/0.png", "resources/img/1.png", "resources/img/2.png", "resources/img/3.png",
+                    "resources/img/4.png", "resources/img/5.png", "resources/img/6.png", "resources/img/7.png" },
+            { "resources/img/up.png", "resources/img/up.png", "resources/img/up.png", "resources/img/up.png",
+                    "resources/img/up.png", "resources/img/up.png", "resources/img/up.png", "resources/img/up.png" },
+            { "resources/img/down_0.png", "resources/img/down_1.png", "resources/img/down_2.png",
+                    "resources/img/down_3.png", "resources/img/down_4.png", "resources/img/down_5.png",
+                    "resources/img/down_6.png", "resources/img/down_7.png" },
+            { "resources/img/dead.png", "resources/img/dead.png", "resources/img/dead.png", "resources/img/dead.png",
+                    "resources/img/dead.png", "resources/img/dead.png", "resources/img/dead.png",
+                    "resources/img/dead.png", } };
 
     // 云朵图片
-    public static final String[] CLOUDS_IMG_PATH = { "src/main/resources/img/cloud_0.png", "src/main/resources/img/cloud_1.png" };
+    public static final String[] CLOUDS_IMG_PATH = { "resources/img/cloud_0.png", "resources/img/cloud_1.png" };
 
     // 水管图片
-    public static final String[] PIPE_IMG_PATH = { "src/main/resources/img/pipe.png", "src/main/resources/img/pipe_top.png",
-            "src/main/resources/img/pipe_bottom.png" };
+    public static final String[] PIPE_IMG_PATH = { "resources/img/pipe.png", "resources/img/pipe_top.png",
+            "resources/img/pipe_bottom.png" };
 
-    public static final String TITLE_IMG_PATH = "src/main/resources/img/title.png";
-    public static final String NOTICE_IMG_PATH = "src/main/resources/img/start.png";
-    public static final String SCORE_IMG_PATH = "src/main/resources/img/score.png";
-    public static final String OVER_IMG_PATH = "src/main/resources/img/over.png";
-    public static final String AGAIN_IMG_PATH = "src/main/resources/img/again.png";
+    public static final String TITLE_IMG_PATH = "resources/img/title.png";
+    public static final String NOTICE_IMG_PATH = "resources/img/start.png";
+    public static final String SCORE_IMG_PATH = "resources/img/score.png";
+    public static final String OVER_IMG_PATH = "resources/img/over.png";
+    public static final String AGAIN_IMG_PATH = "resources/img/again.png";
 
-    public static final String SCORE_FILE_PATH = "src/main/resources/score"; // 分数文件路径
+    public static final String SCORE_FILE_PATH = "resources/score"; // 分数文件路径
 
     // 游戏速度（水管及背景层的移动速度）
     public static final int GAME_SPEED = 4;
