@@ -1,21 +1,22 @@
 package com.kingyu.flappybird.component;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-
-import com.kingyu.flappybird.app.Game;
-import com.kingyu.flappybird.util.Constant;
+import com.kingyu.flappybird.common.Constant;
 import com.kingyu.flappybird.util.GameUtil;
 import com.kingyu.flappybird.util.MusicUtil;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+import static com.kingyu.flappybird.common.Constant.CURRENT_SCORE_FONT;
+import static com.kingyu.flappybird.common.Constant.FRAME_HEIGHT;
+import static com.kingyu.flappybird.common.Constant.FRAME_WIDTH;
+
+
 /**
  * 小鸟类，实现小鸟的绘制与飞行逻辑
- *
- * @author Kingyu
  */
 public class Bird {
+
     public static final int IMG_COUNT = 8; // 图片数量
     public static final int STATE_COUNT = 4; // 状态数
     private final BufferedImage[][] birdImages; // 小鸟的图片数组对象
@@ -43,6 +44,12 @@ public class Bird {
     public static int BIRD_WIDTH;
     public static int BIRD_HEIGHT;
 
+    public static final int ACC_FLAP = 14; // 小鸟扑动的加速度
+    public static final double ACC_Y = 2; // 小鸟向下的加速度
+    public static final int MAX_VEL_Y = 15; // 最大下降速度
+    private int velocity = 0; // 鸟沿Y方向的速度，默认值与playerFlapped相同
+    private final int BOTTOM_BOUNDARY = FRAME_HEIGHT - GameBackground.GROUND_HEIGHT - (BIRD_HEIGHT / 2);
+
     // 在构造器中对资源初始化
     public Bird() {
         counter = ScoreCounter.getInstance(); // 计分器
@@ -61,8 +68,8 @@ public class Bird {
         BIRD_HEIGHT = birdImages[0][0].getHeight();
 
         // 初始化小鸟的坐标
-        x = Constant.FRAME_WIDTH >> 2;
-        y = Constant.FRAME_HEIGHT >> 1;
+        x = FRAME_WIDTH / 4;
+        y = FRAME_HEIGHT / 2;
 
         // 初始化碰撞矩形
         int rectX = x - BIRD_WIDTH / 2;
@@ -72,30 +79,21 @@ public class Bird {
     }
 
     // 绘制方法
-    public void draw(Graphics g) {
+    public void draw(Graphics graphics) {
         movement();
         int state_index = Math.min(state, BIRD_DEAD_FALL); // 图片资源索引
         // 小鸟中心点计算
-        int halfImgWidth = birdImages[state_index][0].getWidth() >> 1;
-        int halfImgHeight = birdImages[state_index][0].getHeight() >> 1;
+        int halfImgWidth = birdImages[state_index][0].getWidth() / 2;
+        int halfImgHeight = birdImages[state_index][0].getHeight() / 2;
         if (velocity > 0)
             image = birdImages[BIRD_UP][0];
-        g.drawImage(image, x - halfImgWidth, y - halfImgHeight, null); // x坐标于窗口1/4处，y坐标位窗口中心
+        graphics.drawImage(image, x - halfImgWidth, y - halfImgHeight, null); // x坐标于窗口1/4处，y坐标位窗口中心
 
         if (state == BIRD_DEAD)
-            gameOverAnimation.draw(g, this);
+            gameOverAnimation.draw(graphics, this);
         else if (state != BIRD_DEAD_FALL)
-            drawScore(g);
-        // 绘制碰撞矩形
-//      g.setColor(Color.black);
-//      g.drawRect((int) birdRect.getX(), (int) birdRect.getY(), (int) birdRect.getWidth(), (int) birdRect.getHeight());
+            drawScore(graphics);
     }
-
-    public static final int ACC_FLAP = 14; // players speed on flapping
-    public static final double ACC_Y = 2; // players downward acceleration
-    public static final int MAX_VEL_Y = 15; // max vel along Y, max descend speed
-    private int velocity = 0; // bird's velocity along Y, default same as playerFlapped
-    private final int BOTTOM_BOUNDARY = Constant.FRAME_HEIGHT - GameBackground.GROUND_HEIGHT - (BIRD_HEIGHT / 2);
 
     // 小鸟的飞行逻辑
     private void movement() {
@@ -123,7 +121,7 @@ public class Bird {
     private void die() {
         counter.saveScore();
         state = BIRD_DEAD;
-        Game.setGameState(Game.STATE_OVER);
+        Game.setGameState(Game.GAME_OVER);
     }
 
     // 小鸟振翅
@@ -161,18 +159,18 @@ public class Bird {
     }
 
     // 绘制实时分数
-    private void drawScore(Graphics g) {
-        g.setColor(Color.white);
-        g.setFont(Constant.CURRENT_SCORE_FONT);
+    private void drawScore(Graphics graphics) {
+        graphics.setColor(Color.white);
+        graphics.setFont(CURRENT_SCORE_FONT);
         String str = Long.toString(counter.getCurrentScore());
-        int x = Constant.FRAME_WIDTH - GameUtil.getStringWidth(Constant.CURRENT_SCORE_FONT, str) >> 1;
-        g.drawString(str, x, Constant.FRAME_HEIGHT / 10);
+        int x = (FRAME_WIDTH - GameUtil.getStringWidth(CURRENT_SCORE_FONT, str)) / 2;
+        graphics.drawString(str, x, FRAME_HEIGHT / 10);
     }
 
     // 重置小鸟
     public void reset() {
         state = BIRD_NORMAL; // 小鸟状态
-        y = Constant.FRAME_HEIGHT >> 1; // 小鸟坐标
+        y = FRAME_HEIGHT / 2; // 小鸟坐标
         velocity = 0; // 小鸟速度
 
         int ImgHeight = birdImages[state][0].getHeight();

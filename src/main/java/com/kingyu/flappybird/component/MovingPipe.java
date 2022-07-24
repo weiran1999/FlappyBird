@@ -1,13 +1,12 @@
 package com.kingyu.flappybird.component;
 
-import java.awt.Graphics;
+import java.awt.*;
 
-import com.kingyu.flappybird.util.Constant;
+import static com.kingyu.flappybird.common.Constant.FRAME_HEIGHT;
+import static com.kingyu.flappybird.common.Constant.TOP_PIPE_LENGTHENING;
 
 /**
  * 移动水管类，继承Pipe类
- *
- * @author Kingyu
  */
 
 public class MovingPipe extends Pipe {
@@ -32,6 +31,7 @@ public class MovingPipe extends Pipe {
      * @param type：水管类型
      * @param visible：水管可见性
      */
+    @Override
     public void setAttribute(int x, int y, int height, int type, boolean visible) {
         super.setAttribute(x, y, height, type, visible);
         dealtY = 0;
@@ -42,16 +42,17 @@ public class MovingPipe extends Pipe {
     }
 
     // 绘制方法
-    public void draw(Graphics g, Bird bird) {
-        switch (type) {
+    @Override
+    public void draw(Graphics graphics, Bird bird) {
+        switch (pipe_type) {
             case TYPE_HOVER_HARD:
-                drawHoverHard(g);
+                drawHoverHard(graphics);
                 break;
             case TYPE_TOP_HARD:
-                drawTopHard(g);
+                drawTopHard(graphics);
                 break;
             case TYPE_BOTTOM_HARD:
-                drawBottomHard(g);
+                drawBottomHard(graphics);
                 break;
 
         }
@@ -60,50 +61,46 @@ public class MovingPipe extends Pipe {
             return;
         }
         movement();
-
-        // 绘制碰撞矩形
-//		g.setColor(Color.black);
-//		g.drawRect((int) pipeRect.getX(), (int) pipeRect.getY(), (int) pipeRect.getWidth(), (int) pipeRect.getHeight());
     }
 
     // 绘制移动的悬浮水管
-    private void drawHoverHard(Graphics g) {
+    private void drawHoverHard(Graphics graphics) {
         // 拼接的个数
-        int count = (height - 2 * PIPE_HEAD_HEIGHT) / PIPE_HEIGHT + 1;
+        int count = (pipe_height - 2 * PIPE_HEAD_HEIGHT) / PIPE_HEIGHT + 1;
         // 绘制水管的上顶部
-        g.drawImage(imgs[2], x - ((PIPE_HEAD_WIDTH - width) >> 1), y + dealtY, null);
+        graphics.drawImage(images[2], pipe_x - ((PIPE_HEAD_WIDTH - pipe_width) / 2), pipe_y + dealtY, null);
         // 绘制水管的主体
         for (int i = 0; i < count; i++) {
-            g.drawImage(imgs[0], x, y + dealtY + i * PIPE_HEIGHT + PIPE_HEAD_HEIGHT, null);
+            graphics.drawImage(images[0], pipe_x, pipe_y + dealtY + i * PIPE_HEIGHT + PIPE_HEAD_HEIGHT, null);
         }
         // 绘制水管的下底部
-        int y = this.y + height - PIPE_HEAD_HEIGHT;
-        g.drawImage(imgs[1], x - ((PIPE_HEAD_WIDTH - width) >> 1), y + dealtY, null);
+        int y = this.pipe_y + pipe_height - PIPE_HEAD_HEIGHT;
+        graphics.drawImage(images[1], pipe_x - ((PIPE_HEAD_WIDTH - pipe_width) / 2), y + dealtY, null);
     }
 
     // 绘制从上往下的移动水管
-    private void drawTopHard(Graphics g) {
+    private void drawTopHard(Graphics graphics) {
         // 拼接的个数
-        int count = (height - PIPE_HEAD_HEIGHT) / PIPE_HEIGHT + 1; // 取整+1
+        int count = (pipe_height - PIPE_HEAD_HEIGHT) / PIPE_HEIGHT + 1; // 取整+1
         // 绘制水管的主体
         for (int i = 0; i < count; i++) {
-            g.drawImage(imgs[0], x, y + dealtY + i * PIPE_HEIGHT, null);
+            graphics.drawImage(images[0], pipe_x, pipe_y + dealtY + i * PIPE_HEIGHT, null);
         }
         // 绘制水管的顶部
-        g.drawImage(imgs[1], x - ((PIPE_HEAD_WIDTH - width) >> 1),
-                height - Constant.TOP_PIPE_LENGTHENING - PIPE_HEAD_HEIGHT + dealtY, null);
+        graphics.drawImage(images[1], pipe_x - ((PIPE_HEAD_WIDTH - pipe_width) / 2),
+                pipe_height - TOP_PIPE_LENGTHENING - PIPE_HEAD_HEIGHT + dealtY, null);
     }
 
     // 绘制从下往上的移动水管
-    private void drawBottomHard(Graphics g) {
+    private void drawBottomHard(Graphics graphics) {
         // 拼接的个数
-        int count = (height - PIPE_HEAD_HEIGHT) / PIPE_HEIGHT + 1;
+        int count = (pipe_height - PIPE_HEAD_HEIGHT) / PIPE_HEIGHT + 1;
         // 绘制水管的主体
         for (int i = 0; i < count; i++) {
-            g.drawImage(imgs[0], x, Constant.FRAME_HEIGHT - PIPE_HEIGHT - i * PIPE_HEIGHT + dealtY, null);
+            graphics.drawImage(images[0], pipe_x, FRAME_HEIGHT - PIPE_HEIGHT - i * PIPE_HEIGHT + dealtY, null);
         }
         // 绘制水管的顶部
-        g.drawImage(imgs[2], x - ((PIPE_HEAD_WIDTH - width) >> 1), Constant.FRAME_HEIGHT - height + dealtY, null);
+        graphics.drawImage(images[2], pipe_x - ((PIPE_HEAD_WIDTH - pipe_width) / 2), FRAME_HEIGHT - pipe_height + dealtY, null);
     }
 
     /**
@@ -111,10 +108,10 @@ public class MovingPipe extends Pipe {
      */
     private void movement() {
         //x坐标的运动逻辑与普通水管相同
-        x -= speed;
-        pipeRect.x -= speed;
-        if (x < -1 * PIPE_HEAD_WIDTH) {// 水管完全离开了窗口
-            visible = false;
+        pipe_x -= pipe_speed;
+        pipeRect.x -= pipe_speed;
+        if (pipe_x < -1 * PIPE_HEAD_WIDTH) {// 水管完全离开了窗口
+            pipe_visible = false;
         }
 
         //水管上下移动的逻辑
@@ -129,7 +126,7 @@ public class MovingPipe extends Pipe {
                 direction = DIR_DOWN;
             }
         }
-        pipeRect.y = this.y + dealtY;
+        pipeRect.y = this.pipe_y + dealtY;
     }
 
 }

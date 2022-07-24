@@ -1,22 +1,21 @@
 package com.kingyu.flappybird.component;
 
+import com.kingyu.flappybird.util.MusicUtil;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import com.kingyu.flappybird.util.Constant;
-import com.kingyu.flappybird.util.MusicUtil;
+import static com.kingyu.flappybird.common.Constant.SCORE_FILE_PATH;
 
 /**
  * 游戏计时器, 使用静态内部类实现了单例模式
- *
- * @author Kingyu
- *
  */
 public class ScoreCounter {
 
+	// 静态内部类单例模式
 	private static class ScoreCounterHolder {
 		private static final ScoreCounter scoreCounter = new ScoreCounter();
 	}
@@ -39,7 +38,7 @@ public class ScoreCounter {
 
 	// 装载最高纪录
 	private void loadBestScore() throws Exception {
-		File file = new File(Constant.SCORE_FILE_PATH);
+		File file = new File(SCORE_FILE_PATH);
 		if (file.exists()) {
 			DataInputStream dis = new DataInputStream(new FileInputStream(file));
 			bestScore = dis.readLong();
@@ -50,7 +49,7 @@ public class ScoreCounter {
 	public void saveScore() {
 		bestScore = Math.max(bestScore, getCurrentScore());
 		try {
-			File file = new File(Constant.SCORE_FILE_PATH);
+			File file = new File(SCORE_FILE_PATH);
 			DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
 			dos.writeLong(bestScore);
 			dos.close();

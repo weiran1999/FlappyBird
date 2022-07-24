@@ -1,14 +1,12 @@
 package com.kingyu.flappybird.component;
 
-import com.kingyu.flappybird.util.Constant;
-
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+
+import static com.kingyu.flappybird.common.Constant.GAME_SPEED;
 
 /**
  * 云朵类，实现云朵的绘制和运动逻辑
- *
- * @author Kingyu
  */
 public class Cloud {
 
@@ -23,11 +21,10 @@ public class Cloud {
 
     // 构造器
     public Cloud(BufferedImage img, int x, int y) {
-        super();
         this.img = img;
         this.x = x;
         this.y = y;
-        this.speed = Constant.GAME_SPEED * 2; //云朵的速度
+        this.speed = GAME_SPEED * 2; // 云朵的速度
         // 云朵图片缩放的比例 1.0~2.0
         double scale = 1 + Math.random(); // Math.random()返回0.0~1.0的随机值
         // 缩放云朵图片
@@ -36,12 +33,12 @@ public class Cloud {
     }
 
     // 绘制方法
-    public void draw(Graphics g, Bird bird) {
+    public void draw(Graphics graphics, Bird bird) {
         int speed = this.speed;
         if (bird.isDead())
             speed = 1;
         x -= speed;
-        g.drawImage(img, x, y, scaleImageWidth, scaleImageHeight, null);
+        graphics.drawImage(img, x, y, scaleImageWidth, scaleImageHeight, null);
     }
 
     /**

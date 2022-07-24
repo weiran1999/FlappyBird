@@ -1,19 +1,21 @@
 package com.kingyu.flappybird.component;
 
-import java.awt.Graphics;
+import com.kingyu.flappybird.util.GameUtil;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kingyu.flappybird.util.Constant;
-import com.kingyu.flappybird.util.GameUtil;
+import static com.kingyu.flappybird.common.Constant.FRAME_HEIGHT;
+import static com.kingyu.flappybird.common.Constant.FRAME_WIDTH;
+import static com.kingyu.flappybird.common.Constant.TOP_PIPE_LENGTHENING;
 
 /**
  * 游戏元素层，目前管理水管的生成逻辑并绘制容器中的水管
- *
- * @author Kingyu
  */
 
 public class GameElementLayer {
+
     private final List<Pipe> pipes; // 水管的容器
 
     // 构造器
@@ -22,12 +24,12 @@ public class GameElementLayer {
     }
 
     // 绘制方法
-    public void draw(Graphics g, Bird bird) {
+    public void draw(Graphics graphics, Bird bird) {
         // 遍历水管容器，如果可见则绘制，不可见则归还
         for (int i = 0; i < pipes.size(); i++) {
             Pipe pipe = pipes.get(i);
-            if (pipe.isVisible()) {
-                pipe.draw(g, bird);
+            if (pipe.isPipe_visible()) {
+                pipe.draw(graphics, bird);
             } else {
                 Pipe remove = pipes.remove(i);
                 PipePool.giveBack(remove);
@@ -41,12 +43,12 @@ public class GameElementLayer {
 
     /**
      * 添加水管的逻辑： 当容器中添加的最后一个元素完全显示到屏幕后，添加下一对； 水管成对地相对地出现，空隙高度为窗口高度的1/6；
-     * 每对水管的间隔距离为屏幕高度的1/4； 水管的高度的取值范围为窗口的[1/8~5/8]
+     * 每对水管的间隔距离为屏幕高度的1/4； 水管的高度取值范围为窗口的[1/8~5/8]
      */
-    public static final int VERTICAL_INTERVAL = Constant.FRAME_HEIGHT / 5;
-    public static final int HORIZONTAL_INTERVAL = Constant.FRAME_HEIGHT >> 2;
-    public static final int MIN_HEIGHT = Constant.FRAME_HEIGHT >> 3;
-    public static final int MAX_HEIGHT = ((Constant.FRAME_HEIGHT) >> 3) * 5;
+    public static final int VERTICAL_INTERVAL = FRAME_HEIGHT / 5;
+    public static final int HORIZONTAL_INTERVAL = FRAME_HEIGHT / 4;
+    public static final int MIN_HEIGHT = FRAME_HEIGHT / 8;
+    public static final int MAX_HEIGHT = ((FRAME_HEIGHT) / 8) * 5;
 
     private void pipeBornLogic(Bird bird) {
         if (bird.isDead()) {
@@ -58,19 +60,19 @@ public class GameElementLayer {
             int topHeight = GameUtil.getRandomNumber(MIN_HEIGHT, MAX_HEIGHT + 1); // 随机生成水管高度
 
             Pipe top = PipePool.get("Pipe");
-            top.setAttribute(Constant.FRAME_WIDTH, -Constant.TOP_PIPE_LENGTHENING,
-                    topHeight + Constant.TOP_PIPE_LENGTHENING, Pipe.TYPE_TOP_NORMAL, true);
+            top.setAttribute(FRAME_WIDTH, -TOP_PIPE_LENGTHENING,
+                    topHeight + TOP_PIPE_LENGTHENING, Pipe.TYPE_TOP_NORMAL, true);
 
             Pipe bottom = PipePool.get("Pipe");
-            bottom.setAttribute(Constant.FRAME_WIDTH, topHeight + VERTICAL_INTERVAL,
-                    Constant.FRAME_HEIGHT - topHeight - VERTICAL_INTERVAL, Pipe.TYPE_BOTTOM_NORMAL, true);
+            bottom.setAttribute(FRAME_WIDTH, topHeight + VERTICAL_INTERVAL,
+                    FRAME_HEIGHT - topHeight - VERTICAL_INTERVAL, Pipe.TYPE_BOTTOM_NORMAL, true);
 
             pipes.add(top);
             pipes.add(bottom);
         } else {
             // 判断最后一对水管是否完全进入游戏窗口，若进入则添加水管
             Pipe lastPipe = pipes.get(pipes.size() - 1); // 获得容器中最后一个水管
-            int currentDistance = lastPipe.getX() - bird.getBirdX() + Bird.BIRD_WIDTH / 2; // 小鸟和最后一根水管的距离
+            int currentDistance = lastPipe.getPipe_x() - bird.getBirdX() + Bird.BIRD_WIDTH / 2; // 小鸟和最后一根水管的距离
             final int SCORE_DISTANCE = Pipe.PIPE_WIDTH * 2 + HORIZONTAL_INTERVAL; // 小于得分距离则得分
             if (lastPipe.isInFrame()) {
                 if (pipes.size() >= PipePool.FULL_PIPE - 2
@@ -106,16 +108,16 @@ public class GameElementLayer {
      */
     private void addNormalPipe(Pipe lastPipe) {
         int topHeight = GameUtil.getRandomNumber(MIN_HEIGHT, MAX_HEIGHT + 1); // 随机生成水管高度
-        int x = lastPipe.getX() + HORIZONTAL_INTERVAL; // 新水管的x坐标 = 最后一对水管的x坐标 + 水管的间隔
+        int x = lastPipe.getPipe_x() + HORIZONTAL_INTERVAL; // 新水管的x坐标 = 最后一对水管的x坐标 + 水管的间隔
 
         Pipe top = PipePool.get("Pipe"); // 从水管对象池中获取对象
 
-        // 设置x, y, height, type属性
-        top.setAttribute(x, -Constant.TOP_PIPE_LENGTHENING, topHeight + Constant.TOP_PIPE_LENGTHENING,
+        // 设置x, pipe_y, pipe_height, type属性
+        top.setAttribute(x, -TOP_PIPE_LENGTHENING, topHeight + TOP_PIPE_LENGTHENING,
                 Pipe.TYPE_TOP_NORMAL, true);
 
         Pipe bottom = PipePool.get("Pipe");
-        bottom.setAttribute(x, topHeight + VERTICAL_INTERVAL, Constant.FRAME_HEIGHT - topHeight - VERTICAL_INTERVAL,
+        bottom.setAttribute(x, topHeight + VERTICAL_INTERVAL, FRAME_HEIGHT - topHeight - VERTICAL_INTERVAL,
                 Pipe.TYPE_BOTTOM_NORMAL, true);
 
         pipes.add(top);
@@ -130,9 +132,9 @@ public class GameElementLayer {
     private void addHoverPipe(Pipe lastPipe) {
 
         // 随机生成水管高度,屏幕高度的[1/4,1/6]
-        int topHoverHeight = GameUtil.getRandomNumber(Constant.FRAME_HEIGHT / 6, Constant.FRAME_HEIGHT / 4);
-        int x = lastPipe.getX() + HORIZONTAL_INTERVAL; // 新水管的x坐标 = 最后一对水管的x坐标 + 水管的间隔
-        int y = GameUtil.getRandomNumber(Constant.FRAME_HEIGHT / 12, Constant.FRAME_HEIGHT / 6); // 随机水管的y坐标，窗口的[1/6,1/12]
+        int topHoverHeight = GameUtil.getRandomNumber(FRAME_HEIGHT / 6, FRAME_HEIGHT / 4);
+        int x = lastPipe.getPipe_x() + HORIZONTAL_INTERVAL; // 新水管的x坐标 = 最后一对水管的x坐标 + 水管的间隔
+        int y = GameUtil.getRandomNumber(FRAME_HEIGHT / 12, FRAME_HEIGHT / 6); // 随机水管的y坐标，窗口的[1/6,1/12]
 
         int type = Pipe.TYPE_HOVER_NORMAL;
 
@@ -141,7 +143,7 @@ public class GameElementLayer {
         topHover.setAttribute(x, y, topHoverHeight, type, true);
 
         // 生成下部的悬浮水管
-        int bottomHoverHeight = Constant.FRAME_HEIGHT - 2 * y - topHoverHeight - VERTICAL_INTERVAL;
+        int bottomHoverHeight = FRAME_HEIGHT - 2 * y - topHoverHeight - VERTICAL_INTERVAL;
         Pipe bottomHover = PipePool.get("Pipe");
         bottomHover.setAttribute(x, y + topHoverHeight + VERTICAL_INTERVAL, bottomHoverHeight, type, true);
 
@@ -158,9 +160,9 @@ public class GameElementLayer {
     private void addMovingHoverPipe(Pipe lastPipe) {
 
         // 随机生成水管高度,屏幕高度的[1/4,1/6]
-        int topHoverHeight = GameUtil.getRandomNumber(Constant.FRAME_HEIGHT / 6, Constant.FRAME_HEIGHT / 4);
-        int x = lastPipe.getX() + HORIZONTAL_INTERVAL; // 新水管的x坐标 = 最后一对水管的x坐标 + 水管的间隔
-        int y = GameUtil.getRandomNumber(Constant.FRAME_HEIGHT / 12, Constant.FRAME_HEIGHT / 6); // 随机水管的y坐标，窗口的[1/6,1/12]
+        int topHoverHeight = GameUtil.getRandomNumber(FRAME_HEIGHT / 6, FRAME_HEIGHT / 4);
+        int x = lastPipe.getPipe_x() + HORIZONTAL_INTERVAL; // 新水管的x坐标 = 最后一对水管的x坐标 + 水管的间隔
+        int y = GameUtil.getRandomNumber(FRAME_HEIGHT / 12, FRAME_HEIGHT / 6); // 随机水管的y坐标，窗口的[1/6,1/12]
 
         int type = Pipe.TYPE_HOVER_HARD;
 
@@ -169,7 +171,7 @@ public class GameElementLayer {
         topHover.setAttribute(x, y, topHoverHeight, type, true);
 
         // 生成下部的悬浮水管
-        int bottomHoverHeight = Constant.FRAME_HEIGHT - 2 * y - topHoverHeight - VERTICAL_INTERVAL;
+        int bottomHoverHeight = FRAME_HEIGHT - 2 * y - topHoverHeight - VERTICAL_INTERVAL;
         Pipe bottomHover = PipePool.get("MovingPipe");
         bottomHover.setAttribute(x, y + topHoverHeight + VERTICAL_INTERVAL, bottomHoverHeight, type, true);
 
@@ -185,14 +187,14 @@ public class GameElementLayer {
      */
     private void addMovingNormalPipe(Pipe lastPipe) {
         int topHeight = GameUtil.getRandomNumber(MIN_HEIGHT, MAX_HEIGHT + 1); // 随机生成水管高度
-        int x = lastPipe.getX() + HORIZONTAL_INTERVAL; // 新水管的x坐标 = 最后一对水管的x坐标 + 水管的间隔
+        int x = lastPipe.getPipe_x() + HORIZONTAL_INTERVAL; // 新水管的x坐标 = 最后一对水管的x坐标 + 水管的间隔
 
         Pipe top = PipePool.get("MovingPipe");
-        top.setAttribute(x, -Constant.TOP_PIPE_LENGTHENING, topHeight + Constant.TOP_PIPE_LENGTHENING,
+        top.setAttribute(x, -TOP_PIPE_LENGTHENING, topHeight + TOP_PIPE_LENGTHENING,
                 Pipe.TYPE_TOP_HARD, true);
 
         Pipe bottom = PipePool.get("MovingPipe");
-        bottom.setAttribute(x, topHeight + VERTICAL_INTERVAL, Constant.FRAME_HEIGHT - topHeight - VERTICAL_INTERVAL,
+        bottom.setAttribute(x, topHeight + VERTICAL_INTERVAL, FRAME_HEIGHT - topHeight - VERTICAL_INTERVAL,
                 Pipe.TYPE_BOTTOM_HARD, true);
 
         pipes.add(top);
